@@ -8,16 +8,39 @@ import {
   VStack,
 } from '@chakra-ui/react';
 import React, { useState } from 'react';
+import { useProductStore } from '../store/product.js';
+import { useToast } from '@chakra-ui/react';
 
 const CreatePage = () => {
   const [newProduct, setNewProduct] = useState({
     name: '',
     price: '',
-    Image: '',
+    image: '',
   });
 
-  const handleAddProduct = () => {
-    console.log(newProduct);
+  const toast = useToast();
+  const { createProduct } = useProductStore();
+
+  const handleAddProduct = async () => {
+    const { success, message } = await createProduct(newProduct);
+
+    if (!success) {
+      toast({
+        title: 'Error',
+        description: message,
+        status: 'error',
+        duration: 5000,
+        isClosable: true,
+      });
+    } else {
+      toast({
+        title: 'Success',
+        description: message,
+        status: 'success',
+        isClosable: true,
+      });
+    }
+    setNewProduct({ name: '', price: '', image: '' });
   };
 
   return (
